@@ -12,17 +12,27 @@
     <label for="id">User id: </label>
     <input type="text" th:field="*{id}" id="id" readonly/>
     <br/>
-    <label for="name">Enter name: </label>
-    <input type="text" th:field="*{getName()}" id="name"/>
+    <label for="name">Edit name: </label>
+    <input type="text" th:field="*{name}" id="name"/>
     <br/>
-    <label for="lastname">Enter lastname: </label>
-    <input type="text" th:field="*{getSurname()}" id="lastname"/>
+    <label for="surname">Edit surname: </label>
+    <input type="text" th:field="*{surname}" id="surname"/>
     <br/>
-<!--    <label for="email">Enter email: </label>-->
-<!--    <input type="text" th:field="*{email}" id="email"/>-->
+    <label for="password">Edit password: </label>
+    <input type="text" th:field="*{password}" id="password"/>
     <br/>
-    <input type="submit" value="Update"/>
+    <label for="roleList">Select new role:</label>
+    <select id="roleList" multiple name="userRole">
+        <option th:each="role : ${allRoles}" th:value="${role.getName()}" th:text="${role.getName()}"/>
+    </select>
+    <br>
+    <br>
+    <input type="submit" value="OK"/>
 </form>
+<br>
+<br>
+<input type="button" value="Log out"
+       onclick="window.location.href='/logout'">
 
 </body>
 </html>

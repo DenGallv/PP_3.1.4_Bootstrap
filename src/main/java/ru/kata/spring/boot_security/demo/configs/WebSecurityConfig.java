@@ -16,7 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final SuccessUserHandler successUserHandler;
-
     private final UserDetailsService userService;
 
     @Autowired
@@ -28,22 +27,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .formLogin().permitAll()
+                .successHandler(successUserHandler)
+                .and()
+                .csrf().disable()
                 .authorizeRequests()
-//                .antMatchers("/authenticated/**").authenticated()
-//                .and()
-//                .formLogin()
-//                .and()
-//                .logout().logoutSuccessUrl("/");
-//                .antMatchers("/", "/index").permitAll()
-//                .antMatchers("/user").hasRole("USER")
-//                .antMatchers("/admin").hasRole("ADMIN")
+                .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers("/user/**").hasAnyRole("USER", "ADMIN")
                 .anyRequest().authenticated()
                 .and()
-                .formLogin()
-                .successHandler(successUserHandler)
-                .permitAll()
-                .and()
-                .logout().logoutSuccessUrl("/")
+                .logout()
                 .permitAll();
     }
 

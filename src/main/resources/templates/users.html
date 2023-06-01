@@ -12,8 +12,9 @@
     <tr>
         <th>Id</th>
         <th>Name</th>
-        <th>Password</th>
         <th>Surname</th>
+        <th>Password</th>
+        <th>Role</th>
     </tr>
     </thead>
     <tbody>
@@ -21,17 +22,19 @@
     <tr th:each="user:${userList}">
 
         <td th:text="${user.getId()}"></td>
-        <td th:text="${user.getUsername()}"></td>
-        <td th:text="${user.getPassword()}"></td>
+        <td th:text="${user.getName()}"></td>
         <td th:text="${user.getSurname()}"></td>
+        <td th:text="${user.getUserPassword()}"></td>
+        <td th:text="${user.getRoles()}"></td>
+
         <td>
-            <form th:action="@{/edit}" method="get">
+            <form th:action="@{/admin/edit}" method="get">
                 <input type="hidden" name="id" th:value="${user.getId()}"/>
                 <input type="submit" value="Update user"/>
             </form>
         </td>
         <td>
-            <form th:method="DELETE" th:action="@{/deleteUser}" method="post">
+            <form th:method="DELETE" th:action="@{/admin/deleteUser}" method="post">
                 <input type="hidden" name="id" th:value="${user.getId()}"/>
                 <input type="submit" value="Delete user"/>
             </form>
@@ -39,10 +42,15 @@
     </tr>
     </tbody>
 </table>
+<br>
 
-<a href=/info>
+<a href=/admin/info>
     <button>Add user</button>
 </a>
+<br>
+<br>
+<input type="button" value="Log out"
+       onclick="window.location.href='/logout'">
 
 </body>
 </html>

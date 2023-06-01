@@ -4,7 +4,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 import java.util.Collection;
 import java.util.List;
 
@@ -16,30 +15,21 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "Поле не должно быть пустым")
-//    @Size(min = 2, max = 50, message = "Имя должно быть от 2 до 50 символов длинной")
     @Column(name = "name")
     private String name;
 
     @Column(name = "password")
     private String password;
 
-    @NotEmpty(message = "Поле не должно быть пустым")
-//    @Size(min = 2, max = 50, message = "Фамилия должна быть от 2 до 50 символов длинной")
     @Column(name = "surname")
     private String surname;
-    //        @Size(min = 5, message = "Не меньше 5 знаков")
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private List<Role> roles;
-
-    public void addRoleToUser(Role role){
-        roles.add(role);
-    }
 
     public User() {
     }
@@ -96,7 +86,7 @@ public class User implements UserDetails {
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", password='" + password + '\'' +
-//                ", roles=" + roles +
+                ", roles=" + roles +
                 '}';
     }
 
@@ -104,8 +94,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-//        return null;
-        return getRoles();
+        return roles;
     }
 
     @Override

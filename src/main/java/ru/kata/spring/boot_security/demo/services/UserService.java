@@ -5,24 +5,34 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
+import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
 
+    // UserDetailsService method
+    @Transactional  // for fetch = FetchType.LAZY
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findUserByName(username);
+    public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
+        User user = userRepository.findUserByName(name);
+        System.out.println("USER FROM DB: " + user);
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         } else {
@@ -31,12 +41,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
-//    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
-//        return roles.stream().map(role -> new SimpleGrantedAuthority(role.getAuthority())).collect(Collectors.toList());
-//    }
-
-    ////////
-
+    // UserRepository methods
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
@@ -54,5 +59,20 @@ public class UserService implements UserDetailsService {
     @Transactional
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+    // RoleRepository methods
+    public List<Role> getAllRoles() {
+        return roleRepository.findAll();
+    }
+
+    public Role getRoleByName(String name) {
+        return roleRepository.findRoleByName(name);
+    }
+
+    public List<Role> getRolesByNames(String[] roles) {
+        List<Role> roleList = new ArrayList<>();
+        Arrays.stream(roles).forEach(role -> roleList.add(getRoleByName(role)));
+        return roleList;
     }
 }
