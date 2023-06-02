@@ -1,7 +1,6 @@
 package ru.kata.spring.boot_security.demo.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -12,12 +11,10 @@ import ru.kata.spring.boot_security.demo.services.UserService;
 @RequestMapping("/admin")
 public class AdminController {
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AdminController(UserService userService, PasswordEncoder passwordEncoder) {
+    public AdminController(UserService userService) {
         this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/")
@@ -36,9 +33,7 @@ public class AdminController {
     @PostMapping("/saveUser")
     public String saveUser(@ModelAttribute("newUser") User user,
                            @RequestParam(value = "userRole") String[] roles) {
-        user.setRoles(userService.getRolesByNames(roles));
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userService.saveOrUpdateUser(user);
+        userService.saveOrUpdateUser(user, roles);
         return "redirect:/admin/";
     }
 
@@ -52,9 +47,7 @@ public class AdminController {
     @PatchMapping("/updateUser")
     public String updateUser(@ModelAttribute("userFromDB") User user,
                              @RequestParam(value = "userRole") String[] roles) {
-        user.setRoles(userService.getRolesByNames(roles));
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userService.saveOrUpdateUser(user);
+        userService.saveOrUpdateUser(user, roles);
         return "redirect:/admin/";
     }
 
