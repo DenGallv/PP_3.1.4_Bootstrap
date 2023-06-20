@@ -18,11 +18,18 @@ public class User implements UserDetails {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "surname")
+    private String surname;
+
+    @Column(name = "age")
+    private String age;
+
+    @Column(name = "email")
+    private String email;
+
     @Column(name = "password")
     private String password;
 
-    @Column(name = "surname")
-    private String surname;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "users_roles",
@@ -34,9 +41,11 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(String name, String surname) {
+    public User(String name, String surname, String age, String email) {
         this.name = name;
         this.surname = surname;
+        this.age = age;
+        this.email = email;
     }
 
     public Long getId() {
@@ -79,12 +88,30 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
+    public String getAge() {
+        return age;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
+                ", age='" + age + '\'' +
+                ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", roles=" + roles +
                 '}';

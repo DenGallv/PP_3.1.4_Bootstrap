@@ -32,14 +32,14 @@ public class UserService implements UserDetailsService {
 
     // UserDetailsService method
     @Override
-    public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
-        User user = userRepository.findUserByName(name);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = getUserByEmail(email);
         System.out.println("USER FROM DB: " + user);
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         } else {
             return new org.springframework.security.core.userdetails.User(
-                    user.getUsername(), user.getPassword(), user.getAuthorities());
+                    user.getEmail(), user.getPassword(), user.getAuthorities());
         }
     }
 
@@ -48,17 +48,37 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
-    public User getUser(Long id) {
+    public User getUserById(Long id) {
         Optional<User> user = userRepository.findById(id);
         return user.orElse(null);
     }
 
+    public User getUserByName(String name) {
+        return userRepository.findUserByName(name);
+    }
+
+    public User getUserByEmail(String email) {
+        return userRepository.findUserByEmail(email);
+    }
+
     @Transactional
-    public void saveOrUpdateUser(User user, String[] roles) {
+    public void saveUser(User user, String[] roles) {
         user.setRoles(getRolesByNames(roles));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
+
+    @Transactional
+    public void updateUser(User user, String[] roles) {
+        user.setRoles(getRolesByNames(roles));
+        if (getUserById(user.getId()).getPassword().equals(user.getPassword())) {
+            user.setPassword(user.getPassword());
+        } else {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+        userRepository.save(user);
+    }
+
 
     @Transactional
     public void deleteUser(Long id) {
